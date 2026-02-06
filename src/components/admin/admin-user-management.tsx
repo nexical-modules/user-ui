@@ -36,7 +36,8 @@ import { Label } from '@/components/ui/label';
 import { UserActionsMenu } from './user-actions-menu';
 import { isSingleMode } from '@modules/user-api/src/config';
 
-import { type User } from '@modules/user-api/src/sdk';
+import { type User, SiteRole } from '@modules/user-api/src/sdk';
+import { Permission } from '@modules/user-api/src/permissions';
 
 function AdminUserManagementContent({ currentUser }: { currentUser?: User }) {
   const { t } = useTranslation();
@@ -48,7 +49,7 @@ function AdminUserManagementContent({ currentUser }: { currentUser?: User }) {
   // Invite State
   const [inviteOpen, setInviteOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
-  const [inviteRole, setInviteRole] = useState('EMPLOYEE');
+  const [inviteRole, setInviteRole] = useState<SiteRole>(SiteRole.EMPLOYEE);
   const [inviteLoading, setInviteLoading] = useState(false);
 
   const fetchUsers = async () => {
@@ -56,7 +57,6 @@ function AdminUserManagementContent({ currentUser }: { currentUser?: User }) {
     setError(null);
     try {
       const result = await api.user.list();
-      // Handle both envelope ({ data: [] }) and direct array ([]) responses
       const usersList = Array.isArray(result) ? result : result.data || [];
       setUsers(usersList);
     } catch (e: unknown) {
@@ -81,7 +81,7 @@ function AdminUserManagementContent({ currentUser }: { currentUser?: User }) {
     try {
       await api.user.auth.inviteUser({
         email: inviteEmail,
-        role: inviteRole as 'ADMIN' | 'EMPLOYEE' | 'CONTRACTOR',
+        role: inviteRole,
       });
 
       toast.success(t('user.admin.user_management.invite.dialog.success'));
@@ -106,6 +106,9 @@ function AdminUserManagementContent({ currentUser }: { currentUser?: User }) {
     );
   });
 
+  // Ensure we have current user role for permission check
+  const role = currentUser?.role || 'ANONYMOUS';
+  const canInvite = Permission.check('user:invite', role);
   const isSingleUserMode = isSingleMode();
 
   return (
@@ -116,7 +119,7 @@ function AdminUserManagementContent({ currentUser }: { currentUser?: User }) {
           <p className="text-subtle">{t('user.admin.user_management.description')}</p>
         </div>
         <div className="shrink-0 flex items-center gap-2">
-          {!isSingleUserMode && (
+          {!isSingleUserMode && canInvite && (
             <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
               <DialogTrigger asChild>
                 <Button
@@ -158,7 +161,10 @@ function AdminUserManagementContent({ currentUser }: { currentUser?: User }) {
                     <Label htmlFor="inviteRole">
                       {t('user.admin.user_management.invite.dialog.role_label')}
                     </Label>
-                    <Select value={inviteRole} onValueChange={setInviteRole}>
+                    <Select
+                      value={inviteRole}
+                      onValueChange={(value) => setInviteRole(value as SiteRole)}
+                    >
                       <SelectTrigger
                         className="admin-select-trigger"
                         data-testid="admin-invite-role-trigger"
