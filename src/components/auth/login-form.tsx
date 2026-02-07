@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { signIn } from 'auth-astro/client';
+import { signIn } from '@modules/user-ui/src/lib/auth-client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -74,8 +74,8 @@ export function LoginForm({ isPublic }: LoginFormProps) {
         password: values.password,
         redirect: true,
         callbackUrl,
-      } as Record<string, unknown>);
-      // Browser redirects on success
+      });
+      // Handler redirects on success
     } catch (err: unknown) {
       console.error('Login Error:', err);
       let message = 'An unexpected error occurred.';
