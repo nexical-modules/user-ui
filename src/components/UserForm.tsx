@@ -6,7 +6,6 @@ import { z } from 'zod';
 import { useCreateUser, useUpdateUser } from '../hooks/use-user';
 import { Permission } from '../lib/permissions';
 import { useAuth } from '../hooks/use-auth';
-import { PasswordInput } from '@/components/ui/password-input';
 import { UserModuleTypes } from '@/lib/api';
 
 // GENERATED CODE - DO NOT MODIFY
@@ -15,8 +14,8 @@ import { UserModuleTypes } from '@/lib/api';
 const schema = z.object({
   username: z.string().optional(),
   email: z.string().email().optional(),
-  passwordUpdatedAt: z.string().datetime().optional(),
-  emailVerified: z.string().datetime().optional(),
+  passwordUpdatedAt: z.coerce.date().optional(),
+  emailVerified: z.coerce.date().optional(),
   name: z.string().optional(),
   image: z.string().optional(),
   role: z.nativeEnum(UserModuleTypes.SiteRole).optional(),
@@ -37,30 +36,31 @@ export function UserForm({
   const { t } = useTranslation();
   const isEdit = !!id,
     createMutation = useCreateUser(),
-    updateMutation = useUpdateUser();
+    updateMutation = useUpdateUser(id);
   const { user } = useAuth();
   const canCreate = Permission.check('user:create', user?.role || 'ANONYMOUS'),
     canUpdate = Permission.check('user:update', user?.role || 'ANONYMOUS');
 
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<FormData>({
+  } = useForm<any>({
     resolver: zodResolver(schema),
     defaultValues: initialData || {},
   });
 
   useEffect(() => {
     if (initialData) {
-      reset(initialData as any);
+      reset(initialData);
     }
   }, [initialData, reset]);
 
   const onSubmit = (data: FormData) => {
     if (isEdit && id) {
-      updateMutation.mutate({ id, data: data as any }, { onSuccess });
+      updateMutation.mutate(data, { onSuccess });
     } else {
       createMutation.mutate(data, { onSuccess });
     }
@@ -94,17 +94,6 @@ export function UserForm({
         {errors.email && (
           <p className="feedback-error-text mt-2">{errors.email?.message as string}</p>
         )}
-      </div>
-      <div>
-        <label htmlFor="password" className="input-label">
-          {t('module.user.field.password')}
-        </label>
-        <div className="mt-1">
-          <PasswordInput
-            id="password"
-            {...register('password')}
-          />
-        </div>
       </div>
       <div className="form-group space-y-group">
         <label htmlFor="passwordUpdatedAt" className="input-label">

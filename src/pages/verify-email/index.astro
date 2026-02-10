@@ -1,30 +1,27 @@
 ---
-import Layout from "@/layouts/Layout.astro";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/components/ui/card";
-import { config } from "@/lib/core/config";
-import { ModuleI18nIntegration } from "@/lib/integrations/module-i18n-integration";
-import { PageGuard } from "@/lib/ui/page-guard";
-import { VerifyEmailController } from "@modules/user-ui/src/components/auth/verify-email-controller";
+import Layout from '@/layouts/Layout.astro';
+import { config } from '@/lib/core/config';
+import { ModuleI18nIntegration } from '@/lib/integrations/module-i18n-integration';
+import { PageGuard } from '@/lib/ui/page-guard';
+import { VerifyEmailController } from '@modules/user-ui/src/components/auth/verify-email-controller';
 
-const guard = await PageGuard.protect(Astro, "anonymous");
+const guard = await PageGuard.protect(Astro, 'anonymous');
 if (guard) return guard;
 
-const lang =
-  Astro.cookies.get("i18next")?.value || config.PUBLIC_DEFAULT_LANGUAGE || "en";
+const lang = Astro.cookies.get('i18next')?.value || config.PUBLIC_DEFAULT_LANGUAGE || 'en';
 const store = await ModuleI18nIntegration.getMergedLocale(lang);
 function t(key: string) {
-  return (key.split(".").reduce((o: any, i) => o?.[i], store) as string) || key;
+  return (
+    (key
+      .split('.')
+      .reduce(
+        (o: Record<string, unknown>, i) => o?.[i] as Record<string, unknown>,
+        store,
+      ) as unknown as string) || key
+  );
 }
 ---
 
-<Layout
-  title={`${t("user.pages.verify_email.title")} | ${config.PUBLIC_SITE_NAME}`}
->
+<Layout title={`${t('user.pages.verify_email.title')} | ${config.PUBLIC_SITE_NAME}`}>
   <VerifyEmailController client:only="react" />
 </Layout>

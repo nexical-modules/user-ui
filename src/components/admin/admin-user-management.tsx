@@ -44,7 +44,6 @@ const UserStatus = UserModuleTypes.UserStatus;
 type SiteRole = UserModuleTypes.SiteRole;
 const SiteRole = UserModuleTypes.SiteRole;
 
-
 function AdminUserManagementContent() {
   const { context } = useNavData();
   const currentUser = context?.user as UserModuleTypes.User | null;

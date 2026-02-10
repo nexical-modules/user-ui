@@ -22,8 +22,6 @@ import {
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 
-import SiteRole = UserModuleTypes.SiteRole;
-
 interface EditRoleDialogProps {
   userId: string;
   currentRole: UserModuleTypes.SiteRole;

@@ -11,10 +11,10 @@ export async function onRequest(context: APIContext, next: MiddlewareNext) {
   if (context.url.pathname.startsWith(authPath)) return next();
 
   // Session Hydration
-  let user: UserModuleTypes.User | null = null;
+  const user: UserModuleTypes.User | null = null;
 
   // Inject navData into locals for pages to consume
-  const userData = user || context.locals.actor || null;
+  const userData = (user || context.locals.actor || null) as UserModuleTypes.User | null;
 
   context.locals.navData = {
     ...context.locals.navData,
@@ -22,13 +22,15 @@ export async function onRequest(context: APIContext, next: MiddlewareNext) {
       ...context.locals.navData?.context,
       user: userData
         ? {
-          id: userData.id,
-          email: userData.email,
-          name: userData.name,
-          username: userData.username,
-          role: (userData as any).role,
-          status: (userData as any).status,
-        }
+            id: userData.id,
+            email: userData.email,
+            name: userData.name,
+            username: userData.username,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            role: (userData as any).role,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            status: (userData as any).status,
+          }
         : null,
     },
   };

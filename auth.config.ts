@@ -1,3 +1,3 @@
 export const authConfig = {
-    basePath: '/api/auth',
+  basePath: '/api/auth',
 };

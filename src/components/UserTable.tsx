@@ -172,7 +172,7 @@ export function UserTable() {
   ];
   return (
     <div className="space-y-4 container-admin-table">
-      <DataTable columns={columns as any} data={data || []} />
+      <DataTable columns={columns} data={data || []} />
       {
         <Sheet open={!!editingItem} onOpenChange={(open) => !open && setEditingItem(null)}>
           <SheetContent className="w-dialog-lg sm:max-w-xl">
@@ -186,7 +186,7 @@ export function UserTable() {
               {editingItem && (
                 <UserForm
                   id={editingItem.id}
-                  initialData={editingItem as any}
+                  initialData={editingItem}
                   onSuccess={() => setEditingItem(null)}
                 />
               )}

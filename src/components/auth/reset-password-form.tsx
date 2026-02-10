@@ -41,25 +41,18 @@ export function ResetPasswordForm() {
     if (tokenParam) {
       setToken(tokenParam);
       // Verify token validity via API
-      api.user.auth.validateResetToken({ token: tokenParam })
-        .then(res => {
-          // @ts-ignore - API response structure might vary
-          setIsValid(res.valid || (res as any).success);
+      api.user.auth
+        .validateResetToken({ token: tokenParam })
+        .then((res) => {
+          // @ts-expect-error - API response structure might vary
+          setIsValid(res.valid || (res as Record<string, unknown>).success);
         })
         .catch(() => {
           setIsValid(false);
-        })
-        .finally(() => {
-          setValidating(false);
         });
-    } else {
       setValidating(false);
     }
   }, []);
-
-  if (validating) {
-    return <div className="p-8 text-center">Loading...</div>;
-  }
 
   const schema = resetSchema(t);
 
@@ -67,6 +60,10 @@ export function ResetPasswordForm() {
     resolver: zodResolver(schema),
     defaultValues: { newPassword: '', confirmPassword: '' },
   });
+
+  if (validating) {
+    return <div className="p-8 text-center">Loading...</div>;
+  }
 
   const onSubmit = async (values: ResetFormValues) => {
     setIsSubmitting(true);
