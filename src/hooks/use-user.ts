@@ -52,11 +52,32 @@ export function useCreateUser() {
   return { mutate, isPending };
 }
 
-export function useUpdateUser(id?: string) {
+export function useUpdateUser(hookId?: string) {
   const [isPending, setIsPending] = useState(false);
 
-  const mutate = async (data: UserModuleTypes.UpdateUserDTO, options?: MutationOptions) => {
-    if (!id) return;
+  const mutate = async (
+    variables:
+      | UserModuleTypes.UpdateUserDTO
+      | { id: string; data: Omit<UserModuleTypes.UpdateUserDTO, 'id'> },
+    options?: MutationOptions,
+  ) => {
+    let id = hookId;
+    let data: UserModuleTypes.UpdateUserDTO;
+
+    if ('data' in variables && 'id' in variables) {
+      id = variables.id;
+      // Combine id and data to match UpdateUserDTO
+      data = { ...variables.data, id } as UserModuleTypes.UpdateUserDTO;
+    } else {
+      data = variables as UserModuleTypes.UpdateUserDTO;
+      if (!id && data.id) id = data.id;
+    }
+
+    if (!id) {
+      console.error('useUpdateUser: Missing ID');
+      return;
+    }
+
     setIsPending(true);
     try {
       const res = await api.user.update(id, data);
