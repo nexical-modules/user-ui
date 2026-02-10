@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUserQuery, useDeleteUser } from '../hooks/use-user';
-import { Permission } from '../lib/permissions';
-import { useAuth } from '../hooks/use-auth';
+import { UserModuleTypes } from '@/lib/api';
 import { type ColumnDef } from '@tanstack/react-table';
 import { DataTable } from '@/components/ui/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/ui/data-table/data-table-column-header';
@@ -16,9 +15,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { UserModuleTypes } from '@/lib/api';
 import { ConfirmFormDeletion } from '@/components/ui/confirm-form-deletion';
 import { UserForm } from './UserForm';
+import { Permission } from '../lib/permissions';
+import { useNavData } from '@/lib/ui/nav-context';
 import {
   Sheet,
   SheetContent,
@@ -33,7 +33,8 @@ export function UserTable() {
   const { t } = useTranslation();
   const { data, isLoading } = useUserQuery();
   const deleteMutation = useDeleteUser();
-  const { user } = useAuth();
+  const { context } = useNavData(),
+    user = context?.user;
   const canDelete = Permission.check('user:delete', user?.role || 'ANONYMOUS'),
     canUpdate = Permission.check('user:update', user?.role || 'ANONYMOUS');
   const [editingItem, setEditingItem] = useState<UserModuleTypes.User | null>(null);
@@ -196,8 +197,8 @@ export function UserTable() {
       }
       <ConfirmFormDeletion
         isOpen={!!deletingItem}
-        onOpenChange={(open: boolean) => !open && setDeletingItem(null)}
-        resourceName="'User'"
+        onOpenChange={(open) => !open && setDeletingItem(null)}
+        resourceName="User"
         resourceIdentifier={deletingItem?.id || ''}
         onConfirm={() => {
           if (deletingItem) deleteMutation.mutate(deletingItem.id);

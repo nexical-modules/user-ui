@@ -20,7 +20,7 @@ import { Permission } from '../../lib/permissions';
 
 interface UserActionsMenuProps {
   user: UserModuleTypes.User;
-  currentUser: UserModuleTypes.User | null;
+  currentUser: UserModuleTypes.User | null | undefined;
   onRefresh: () => void;
 }
 

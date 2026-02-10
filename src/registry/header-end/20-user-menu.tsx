@@ -16,8 +16,6 @@ import { useNavData } from '@/lib/ui/nav-context';
 import { Settings, LogOut, Key, ChevronDown, Users } from 'lucide-react';
 import { Permission } from '../../lib/permissions';
 
-import { UserModuleTypes } from '@/lib/api';
-
 /**
  * Registry component for the user profile menu in the header.
  * Consumes NavContext and ShellStore.
@@ -26,7 +24,7 @@ export default function UserProfile() {
   const { t } = useTranslation();
   const { context } = useNavData();
   const { setDetailPanel } = useShellStore();
-  const user = context?.user as UserModuleTypes.User | undefined;
+  const user = context?.user;
 
   if (!user) return null;
 

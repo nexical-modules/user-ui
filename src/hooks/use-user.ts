@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api } from '@/lib/api/api';
+import { UserModuleTypes } from '@/lib/api';
 
 interface MutationOptions {
   onSuccess?: (data: unknown) => void;
@@ -8,7 +9,7 @@ interface MutationOptions {
 }
 
 export function useUserQuery(options?: Record<string, unknown>) {
-  const [data, setData] = useState<unknown[]>([]);
+  const [data, setData] = useState<UserModuleTypes.User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -17,7 +18,7 @@ export function useUserQuery(options?: Record<string, unknown>) {
     try {
       const res = await api.user.list();
       // Handle envelope
-      const list = Array.isArray(res) ? res : res.data || [];
+      const list = (Array.isArray(res) ? res : res.data || []) as UserModuleTypes.User[];
       setData(list);
     } catch (e) {
       setError(e as Error);
@@ -36,7 +37,7 @@ export function useUserQuery(options?: Record<string, unknown>) {
 export function useCreateUser() {
   const [isPending, setIsPending] = useState(false);
 
-  const mutate = async (data: Parameters<typeof api.user.create>[0], options?: MutationOptions) => {
+  const mutate = async (data: UserModuleTypes.CreateUserDTO, options?: MutationOptions) => {
     setIsPending(true);
     try {
       const res = await api.user.create(data);
@@ -54,7 +55,7 @@ export function useCreateUser() {
 export function useUpdateUser(id?: string) {
   const [isPending, setIsPending] = useState(false);
 
-  const mutate = async (data: Parameters<typeof api.user.update>[1], options?: MutationOptions) => {
+  const mutate = async (data: UserModuleTypes.UpdateUserDTO, options?: MutationOptions) => {
     if (!id) return;
     setIsPending(true);
     try {

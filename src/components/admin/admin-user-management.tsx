@@ -42,11 +42,10 @@ const SiteRole = UserModuleTypes.SiteRole;
 const UserStatus = UserModuleTypes.UserStatus;
 
 type SiteRole = UserModuleTypes.SiteRole;
-const SiteRole = UserModuleTypes.SiteRole;
 
 function AdminUserManagementContent() {
   const { context } = useNavData();
-  const currentUser = context?.user as UserModuleTypes.User | null;
+  const currentUser = context?.user;
   const { t } = useTranslation();
   const [users, setUsers] = useState<UserModuleTypes.User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -116,6 +115,7 @@ function AdminUserManagementContent() {
   // Ensure we have current user role for permission check
   const role = currentUser?.role || 'ANONYMOUS';
   const canInvite = Permission.check('user:invite', role);
+  const isSingleUserMode = context?.isSingleUserMode === true || context?.userMode === 'SINGLE';
 
   return (
     <div className="space-y-6" data-testid="admin-user-management">
