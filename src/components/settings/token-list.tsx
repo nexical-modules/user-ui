@@ -15,7 +15,9 @@ import {
 import { CreateTokenDialog } from './create-token-dialog';
 import { toast } from 'sonner';
 import { I18nProvider } from '@/components/system/I18nProvider';
-import { type PersonalAccessToken as AccessToken } from '@modules/user-api/src/sdk';
+import { UserModuleTypes } from '@/lib/api';
+
+type AccessToken = UserModuleTypes.PersonalAccessToken;
 
 interface TokenListProps {
   tokens: AccessToken[];

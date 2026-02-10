@@ -2,7 +2,7 @@
 import type { APIContext, MiddlewareNext } from 'astro';
 
 import { authConfig } from '../auth.config';
-import type { User } from '@modules/user-api/src/sdk';
+import type { UserModuleTypes } from '@/lib/api';
 
 // GENERATED CODE - DO NOT MODIFY
 export async function onRequest(context: APIContext, next: MiddlewareNext) {
@@ -11,7 +11,7 @@ export async function onRequest(context: APIContext, next: MiddlewareNext) {
   if (context.url.pathname.startsWith(authPath)) return next();
 
   // Session Hydration
-  let user: User | undefined;
+  let user: UserModuleTypes.User | null = null;
 
   // Inject navData into locals for pages to consume
   const userData = user || context.locals.actor || null;
@@ -22,13 +22,13 @@ export async function onRequest(context: APIContext, next: MiddlewareNext) {
       ...context.locals.navData?.context,
       user: userData
         ? {
-            id: userData.id,
-            email: userData.email,
-            name: userData.name,
-            username: userData.username,
-            role: (userData as User).role,
-            status: (userData as User).status,
-          }
+          id: userData.id,
+          email: userData.email,
+          name: userData.name,
+          username: userData.username,
+          role: (userData as any).role,
+          status: (userData as any).status,
+        }
         : null,
     },
   };

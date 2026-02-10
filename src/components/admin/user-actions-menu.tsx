@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Shield, Trash, UserX, UserCheck, Settings } from 'lucide-react';
-import { api, type ApiError } from '@/lib/api/api';
+import { api, type ApiError, UserModuleTypes } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -14,13 +14,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { EditRoleDialog } from './edit-role-dialog';
 import { DeleteUserDialog } from './delete-user-dialog';
+const UserStatus = UserModuleTypes.UserStatus;
 
-import { type User, UserStatus } from '@modules/user-api/src/sdk';
-import { Permission } from '@modules/user-api/src/permissions';
+import { Permission } from '../../lib/permissions';
 
 interface UserActionsMenuProps {
-  user: User;
-  currentUser?: User;
+  user: UserModuleTypes.User;
+  currentUser: UserModuleTypes.User | null;
   onRefresh: () => void;
 }
 
@@ -125,7 +125,7 @@ export function UserActionsMenu({ user, currentUser, onRefresh }: UserActionsMen
 
       <EditRoleDialog
         userId={user.id}
-        currentRole={user.role}
+        currentRole={(user.role as UserModuleTypes.SiteRole) || UserModuleTypes.SiteRole.EMPLOYEE}
         open={showRoleDialog}
         onOpenChange={setShowRoleDialog}
         onSuccess={onRefresh}

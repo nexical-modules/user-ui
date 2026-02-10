@@ -2,8 +2,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api, type ApiError } from '@/lib/api/api';
-import { type PersonalAccessToken as AccessToken } from '@modules/user-api/src/sdk';
-type CreateTokenResponse = { token: AccessToken; rawKey: string };
+import { UserModuleTypes } from '@/lib/api';
+
+type AccessToken = UserModuleTypes.PersonalAccessToken;
 import { Copy, Plus, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -42,10 +43,10 @@ export function CreateTokenDialog({ onTokenCreated }: CreateTokenDialogProps) {
       // Construct a temporary AccessToken object for UI update
       const newToken: AccessToken = {
         ...(data.token || data),
-        prefix: 'pat', // Default prefix if not returned or known
+        prefix: 'pat',
         lastUsedAt: null,
         expiresAt: null,
-      };
+      } as AccessToken;
       onTokenCreated(newToken);
       toast.success('Token created successfully');
     } catch (err: unknown) {

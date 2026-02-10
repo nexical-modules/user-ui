@@ -1,4 +1,4 @@
-import { api, type ApiError } from '@/lib/api/api';
+import { api, type ApiError } from '@/lib/api';
 import { useTranslation } from 'react-i18next';
 import { ConfirmDeletionDialog } from '@/components/confirm-deletion-dialog';
 

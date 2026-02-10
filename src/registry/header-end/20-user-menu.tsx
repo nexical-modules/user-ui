@@ -14,7 +14,9 @@ import { useTranslation } from 'react-i18next';
 import { useShellStore } from '@/lib/ui/shell-store';
 import { useNavData } from '@/lib/ui/nav-context';
 import { Settings, LogOut, Key, ChevronDown, Users } from 'lucide-react';
-import { Permission } from '@modules/user-api/src/permissions';
+import { Permission } from '../../lib/permissions';
+
+import { UserModuleTypes } from '@/lib/api';
 
 /**
  * Registry component for the user profile menu in the header.
@@ -24,11 +26,10 @@ export default function UserProfile() {
   const { t } = useTranslation();
   const { context } = useNavData();
   const { setDetailPanel } = useShellStore();
-  const user = context?.user as { name: string; email: string; role?: string } | undefined;
+  const user = context?.user as UserModuleTypes.User | undefined;
 
   if (!user) return null;
 
-  // Use Centralized Permission Check instead of hardcoded roles
   const canAccessAdmin = Permission.check('auth:sudo', user.role || 'ANONYMOUS');
 
   return (

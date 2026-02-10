@@ -3,15 +3,14 @@
 import Layout from "@/layouts/Layout.astro";
 import { LoginForm } from "@modules/user-ui/src/components/auth/login-form";
 import { config } from "@/lib/core/config";
-// Local implementation of simple config check to avoid importing backend module
-const isPublicMode = () =>
-  import.meta.env.PUBLIC_USER_MODE === "PUBLIC" || true; // Default to true if not set for now
 import { PageGuard } from "@/lib/ui/page-guard";
+
+const isPublicMode = import.meta.env.PUBLIC_USER_MODE === "PUBLIC" || true;
 
 const guard = await PageGuard.protect(Astro, "anonymous");
 if (guard) return guard;
 ---
 
 <Layout showShell={true}>
-  <LoginForm client:load isPublic={isPublicMode()} />
+  <LoginForm client:load isPublic={isPublicMode} />
 </Layout>

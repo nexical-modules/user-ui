@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { api, type ApiError } from '@/lib/api/api';
+import { api, type ApiError, UserModuleTypes } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -22,24 +22,18 @@ import {
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 
-const SiteRole = {
-  ADMIN: 'ADMIN',
-  EMPLOYEE: 'EMPLOYEE',
-  CONTRACTOR: 'CONTRACTOR',
-} as const;
-
-type SiteRoleType = keyof typeof SiteRole;
+import SiteRole = UserModuleTypes.SiteRole;
 
 interface EditRoleDialogProps {
   userId: string;
-  currentRole: SiteRoleType;
+  currentRole: UserModuleTypes.SiteRole;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
 }
 
 const roleSchema = z.object({
-  role: z.nativeEnum(SiteRole),
+  role: z.nativeEnum(UserModuleTypes.SiteRole),
 });
 
 type RoleFormValues = z.infer<typeof roleSchema>;
@@ -90,7 +84,7 @@ export function EditRoleDialog({
           <div className="admin-form-group">
             <Label>{t('user.admin.edit_role.role_label')}</Label>
             <Select
-              onValueChange={(val) => form.setValue('role', val as SiteRoleType)}
+              onValueChange={(val) => form.setValue('role', val as UserModuleTypes.SiteRole)}
               defaultValue={currentRole}
             >
               <SelectTrigger className="admin-select-trigger" data-testid="admin-edit-role-trigger">

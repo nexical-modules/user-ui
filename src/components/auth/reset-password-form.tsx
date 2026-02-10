@@ -24,15 +24,42 @@ const resetSchema = (t: (key: string) => string) =>
 
 type ResetFormValues = z.infer<ReturnType<typeof resetSchema>>;
 
-export function ResetPasswordForm({ token, isValid }: { token: string; isValid: boolean }) {
+export function ResetPasswordForm() {
   const { t } = useTranslation();
+  const [token, setToken] = useState<string | null>(null);
+  const [isValid, setIsValid] = useState<boolean>(false);
+  const [validating, setValidating] = useState<boolean>(true);
   const [serverError, setServerError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     setHydrated(true);
+    const params = new URLSearchParams(window.location.search);
+    const tokenParam = params.get('token');
+
+    if (tokenParam) {
+      setToken(tokenParam);
+      // Verify token validity via API
+      api.user.auth.validateResetToken({ token: tokenParam })
+        .then(res => {
+          // @ts-ignore - API response structure might vary
+          setIsValid(res.valid || (res as any).success);
+        })
+        .catch(() => {
+          setIsValid(false);
+        })
+        .finally(() => {
+          setValidating(false);
+        });
+    } else {
+      setValidating(false);
+    }
   }, []);
+
+  if (validating) {
+    return <div className="p-8 text-center">Loading...</div>;
+  }
 
   const schema = resetSchema(t);
 
@@ -47,7 +74,7 @@ export function ResetPasswordForm({ token, isValid }: { token: string; isValid: 
 
     try {
       const result = await api.user.auth.resetPassword({
-        token,
+        token: token!,
         password: values.newPassword,
         confirmPassword: values.confirmPassword,
       });

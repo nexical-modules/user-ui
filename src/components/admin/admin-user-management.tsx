@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { api, type ApiError } from '@/lib/api/api';
+import { api, type ApiError, UserModuleTypes } from '@/lib/api';
 import { toast } from 'sonner';
 import {
   Table,
@@ -34,14 +34,22 @@ import {
 import { UserPlus, Search, RefreshCcw } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { UserActionsMenu } from './user-actions-menu';
-import { isSingleMode } from '@modules/user-api/src/config';
+import { useNavData } from '@/lib/ui/nav-context';
 
-import { type User, SiteRole } from '@modules/user-api/src/sdk';
-import { Permission } from '@modules/user-api/src/permissions';
+import { Permission } from '../../lib/permissions';
 
-function AdminUserManagementContent({ currentUser }: { currentUser?: User }) {
+const SiteRole = UserModuleTypes.SiteRole;
+const UserStatus = UserModuleTypes.UserStatus;
+
+type SiteRole = UserModuleTypes.SiteRole;
+const SiteRole = UserModuleTypes.SiteRole;
+
+
+function AdminUserManagementContent() {
+  const { context } = useNavData();
+  const currentUser = context?.user as UserModuleTypes.User | null;
   const { t } = useTranslation();
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<UserModuleTypes.User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
@@ -109,7 +117,6 @@ function AdminUserManagementContent({ currentUser }: { currentUser?: User }) {
   // Ensure we have current user role for permission check
   const role = currentUser?.role || 'ANONYMOUS';
   const canInvite = Permission.check('user:invite', role);
-  const isSingleUserMode = isSingleMode();
 
   return (
     <div className="space-y-6" data-testid="admin-user-management">
@@ -182,7 +189,7 @@ function AdminUserManagementContent({ currentUser }: { currentUser?: User }) {
                         <SelectItem value="CONTRACTOR">
                           {t('user.admin.user_management.invite.dialog.roles.contractor')}
                         </SelectItem>
-                        <SelectItem value="ADMIN">
+                        <SelectItem value={UserModuleTypes.SiteRole.ADMIN}>
                           {t('user.admin.user_management.invite.dialog.roles.admin')}
                         </SelectItem>
                       </SelectContent>
@@ -320,6 +327,10 @@ function AdminUserManagementContent({ currentUser }: { currentUser?: User }) {
   );
 }
 
-export function AdminUserManagement({ currentUser }: { i18nData?: any; currentUser?: User }) {
-  return <AdminUserManagementContent currentUser={currentUser} />;
+export function AdminUserManagement() {
+  return (
+    <I18nProvider>
+      <AdminUserManagementContent />
+    </I18nProvider>
+  );
 }

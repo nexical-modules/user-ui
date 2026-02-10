@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useUserQuery, useDeleteUser } from '@/hooks/use-user';
-import { Permission } from '@modules/user-api/src/permissions';
-import { useAuth } from '@/hooks/use-auth';
+import { useUserQuery, useDeleteUser } from '../hooks/use-user';
+import { Permission } from '../lib/permissions';
+import { useAuth } from '../hooks/use-auth';
 import { type ColumnDef } from '@tanstack/react-table';
 import { DataTable } from '@/components/ui/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/ui/data-table/data-table-column-header';
@@ -16,7 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { type User } from '@modules/user-api/src/sdk';
+import { UserModuleTypes } from '@/lib/api';
 import { ConfirmFormDeletion } from '@/components/ui/confirm-form-deletion';
 import { UserForm } from './UserForm';
 import {
@@ -36,12 +36,12 @@ export function UserTable() {
   const { user } = useAuth();
   const canDelete = Permission.check('user:delete', user?.role || 'ANONYMOUS'),
     canUpdate = Permission.check('user:update', user?.role || 'ANONYMOUS');
-  const [editingItem, setEditingItem] = useState<User | null>(null);
-  const [deletingItem, setDeletingItem] = useState<User | null>(null);
+  const [editingItem, setEditingItem] = useState<UserModuleTypes.User | null>(null);
+  const [deletingItem, setDeletingItem] = useState<UserModuleTypes.User | null>(null);
   if (isLoading) {
     return <div className="layout-centered py-12 text-subtle">{t('common.status.loading')}</div>;
   }
-  const columns: ColumnDef<User>[] = [
+  const columns: ColumnDef<UserModuleTypes.User>[] = [
     {
       accessorKey: 'id',
       header: ({ column }) => (
@@ -172,7 +172,7 @@ export function UserTable() {
   ];
   return (
     <div className="space-y-4 container-admin-table">
-      <DataTable columns={columns} data={data || []} />
+      <DataTable columns={columns as any} data={data || []} />
       {
         <Sheet open={!!editingItem} onOpenChange={(open) => !open && setEditingItem(null)}>
           <SheetContent className="w-dialog-lg sm:max-w-xl">
@@ -186,7 +186,7 @@ export function UserTable() {
               {editingItem && (
                 <UserForm
                   id={editingItem.id}
-                  initialData={editingItem}
+                  initialData={editingItem as any}
                   onSuccess={() => setEditingItem(null)}
                 />
               )}
@@ -196,7 +196,7 @@ export function UserTable() {
       }
       <ConfirmFormDeletion
         isOpen={!!deletingItem}
-        onOpenChange={(open) => !open && setDeletingItem(null)}
+        onOpenChange={(open: boolean) => !open && setDeletingItem(null)}
         resourceName="'User'"
         resourceIdentifier={deletingItem?.id || ''}
         onConfirm={() => {
