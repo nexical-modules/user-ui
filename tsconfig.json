@@ -4,5 +4,5 @@
     "noEmit": true,
     "baseUrl": "../../"
   },
-  "include": ["src/**/*", "../../src/**/*", "../../modules/*/src/types.d.ts"]
+  "include": ["src/**/*", "../../src/**/*", "../../../core/src/**/*"]
 }
