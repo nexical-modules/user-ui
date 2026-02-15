@@ -1,0 +1,20 @@
+// GENERATED CODE - DO NOT MODIFY
+import type { AstroGlobal, APIContext } from 'astro';
+import type { RolePolicy } from '@/lib/registries/role-registry';
+
+export class BaseRole implements RolePolicy {
+  public async check(
+    context: AstroGlobal | APIContext,
+    input: Record<string, unknown>,
+    data?: unknown,
+  ): Promise<void> {
+    const locals = (context as { locals?: App.Locals }).locals;
+    const actor = locals?.actor;
+    if (!actor) {
+      throw new Error('Unauthorized: No actor found');
+    }
+    if (!actor.roles?.includes(this.name)) {
+      throw new Error(`Forbidden: required role ${this.name}`);
+    }
+  }
+}
