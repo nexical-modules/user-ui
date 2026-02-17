@@ -3,7 +3,7 @@ import type { AstroGlobal, APIContext } from 'astro';
 import type { RolePolicy } from '@/lib/registries/role-registry';
 
 export abstract class BaseRole implements RolePolicy {
-  public static async check(
+  public async check(
     context: AstroGlobal | APIContext,
     input: Record<string, unknown>,
     data?: unknown,
