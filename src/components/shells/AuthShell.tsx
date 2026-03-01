@@ -1,8 +1,14 @@
+'use client';
 import React from 'react';
 import { RegistryLoader } from '@/components/shell/registry-loader';
-// import { config } from '@/lib/core/config'; // Assuming config is available or use placeholder
 
-export function AuthShell({ children }: { children: React.ReactNode }) {
+export function AuthShell({
+  children,
+  navData: _navData,
+}: {
+  children: React.ReactNode;
+  navData: Record<string, unknown>;
+}) {
   return (
     <div
       className="auth-page-container min-h-screen flex flex-col items-center justify-center p-4 bg-muted/20 relative overflow-hidden"
