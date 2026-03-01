@@ -1,8 +1,8 @@
-const AUTH_API_URL = (import.meta.env.PUBLIC_API_URL || 'http://localhost:4321') + '/api/auth';
+const AUTH_API_URL = (import.meta.env.PUBLIC_API_URL || 'http://localhost:4321/api') + '/auth';
 
 export async function getCsrfToken() {
   try {
-    const res = await fetch(`${AUTH_API_URL}/csrf`, { credentials: 'omit' }); // CSRF endpoint is usually public/no-cookie needed for initial
+    const res = await fetch(`${AUTH_API_URL}/csrf`, { credentials: 'include' });
     const data = await res.json();
     return data.csrfToken;
   } catch (e) {
@@ -20,30 +20,61 @@ export async function signIn(provider: string, options: Record<string, unknown>)
     formData.append('csrfToken', csrfToken);
     formData.append('email', (options.identifier || options.email) as string);
     formData.append('password', options.password as string);
-    formData.append('callbackUrl', (options.callbackUrl as string) || window.location.href);
     formData.append('json', 'true');
 
-    const res = await fetch(`${AUTH_API_URL}/callback/credentials`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+    const callbackUrl = (options.callbackUrl as string) || window.location.href;
+    const res = await fetch(
+      `${AUTH_API_URL}/callback/credentials?callbackUrl=${encodeURIComponent(callbackUrl)}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formData,
+        credentials: 'include', // Important for receiving the cookie
       },
-      body: formData,
-      credentials: 'include', // Important for receiving the cookie
-    });
+    );
 
-    const data = await res.json();
+    // Check if Auth.js responded with a redirect (which fetch automatically followed)
+    if (res.redirected) {
+      const finalUrl = new URL(res.url);
+      if (finalUrl.searchParams.has('error')) {
+        throw new Error(finalUrl.searchParams.get('error') || 'Login failed');
+      }
+
+      // If the backend redirected to itself (e.g. localhost:4321), we should instead go to the intended frontend URL
+      const targetUrl = (options.callbackUrl as string) || '/';
+      window.location.href = targetUrl;
+      return { ok: true, url: targetUrl };
+    }
+
+    // Attempt to parse JSON if no redirect occurred
+    let data;
+    try {
+      const contentType = res.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        console.warn('Received non-JSON response:', text);
+        throw new Error('Invalid response from server.');
+      }
+    } catch {
+      if (!res.ok) throw new Error('Login request failed');
+      window.location.reload();
+      return { ok: true };
+    }
 
     if (res.ok) {
       // Success, usually redirects. Since we passed json=true, we get url.
-      if (data.url) {
+      if (data && data.url) {
         window.location.href = data.url;
       } else {
         window.location.reload();
       }
       return { ok: true, ...data };
     } else {
-      throw new Error(data.message || 'Login failed');
+      throw new Error((data && data.message) || 'Login failed');
     }
   }
   // Handle other providers (GitHub etc) -> Redirect to backend endpoint
