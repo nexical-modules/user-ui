@@ -1,17 +1,17 @@
 ---
 export const prerender = false;
-/* eslint-disable */
-import Layout from "@/layouts/Layout.astro";
-import { LoginForm } from "@modules/user-ui/src/components/auth/login-form";
-import { config } from "@/lib/core/config";
-import { PageGuard } from "@/lib/ui/page-guard";
+ 
+import Layout from '@/layouts/Layout.astro';
+import { LoginForm } from '@modules/user-ui/src/components/auth/login-form';
+import { config } from '@/lib/core/config';
+import { PageGuard } from '@/lib/ui/page-guard';
 
-const isPublicMode = import.meta.env.PUBLIC_USER_MODE === "PUBLIC" || true;
+const isPublicMode = import.meta.env.PUBLIC_USER_MODE === 'PUBLIC' || true;
 
-const guard = await PageGuard.protect(Astro, "anonymous");
+const guard = await PageGuard.protect(Astro, 'anonymous');
 if (guard) return guard;
 ---
 
-<Layout showShell={true}>
+<Layout title={`Sign In - ${config.PUBLIC_SITE_NAME}`}>
   <LoginForm client:load isPublic={isPublicMode} />
 </Layout>
