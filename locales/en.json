@@ -1,0 +1,100 @@
+{
+  "user": {
+    "auth": {
+      "login": {
+        "title": "Welcome Back",
+        "description": "Sign in to your account to continue.",
+        "identifier_label": "Email or Username",
+        "identifier_placeholder": "name@{{domain}}",
+        "password_label": "Password",
+        "forgot_password": "Forgot password?",
+        "submit_button": "Sign In",
+        "submitting_button": "Signing In...",
+        "register_text": "Don't have an account?",
+        "register_link": "Sign up",
+        "validation": {
+          "identifier_required": "Email or username is required.",
+          "password_required": "Password is required."
+        },
+        "error": {
+          "invalid_credentials": "Invalid email or password.",
+          "account_deactivated": "Your account has been deactivated.",
+          "unverified_email": "Please verify your email address to continue.",
+          "generic": "An error occurred during login.",
+          "unexpected": "An unexpected error occurred."
+        }
+      },
+      "register": {
+        "title": "Create an Account",
+        "description": "Enter your details below to create your account.",
+        "name_label": "Full Name",
+        "name_placeholder": "John Doe",
+        "username_label": "Username",
+        "username_placeholder": "johndoe",
+        "email_label": "Email",
+        "email_placeholder": "name@{{domain}}",
+        "password_label": "Password",
+        "confirm_password_label": "Confirm Password",
+        "submit_button": "Create Account",
+        "submitting_button": "Creating Account...",
+        "success_title": "Check your email",
+        "success_description": "We've sent you a verification link.",
+        "success_message": "Please check your inbox and click the link to verify your account.",
+        "proceed_to_login": "Proceed to login",
+        "login_text": "Already have an account?",
+        "login_link": "Sign in",
+        "validation": {
+          "name_required": "Name is required.",
+          "username_min": "Username must be at least 3 characters.",
+          "username_regex": "Username can only contain letters, numbers, and underscores.",
+          "email_invalid": "Invalid email address.",
+          "password_min": "Password must be at least 8 characters.",
+          "confirm_password_required": "Please confirm your password.",
+          "passwords_mismatch": "Passwords do not match."
+        },
+        "error": {
+          "generic": "Registration failed.",
+          "restricted": "Registration is currently restricted.",
+          "unexpected": "An unexpected error occurred."
+        }
+      },
+      "forgot_password": {
+        "title": "Forgot Password",
+        "description": "Enter your email address and we will send you a link to reset your password.",
+        "email_label": "Email",
+        "email_placeholder": "name@{{domain}}",
+        "submit_button": "Send Reset Link",
+        "submitting_button": "Sending...",
+        "success_title": "Check your email",
+        "success_description": "We've sent a password reset link to your email address.",
+        "return_to_login": "Return to login",
+        "back_to_login": "Back to login",
+        "validation": {
+          "email_invalid": "Invalid email address."
+        },
+        "error": {
+          "unexpected": "An unexpected error occurred."
+        }
+      },
+      "reset_password": {
+        "title": "Reset Password",
+        "description": "Enter a new password for your account.",
+        "new_password_label": "New Password",
+        "confirm_password_label": "Confirm New Password",
+        "submit_button": "Reset Password",
+        "submitting_button": "Resetting...",
+        "expired_title": "Link Expired",
+        "expired_message": "This password reset link has expired or is invalid.",
+        "request_new_link": "Request a new link",
+        "validation": {
+          "password_min": "Password must be at least 8 characters.",
+          "confirm_password_required": "Please confirm your new password.",
+          "passwords_mismatch": "Passwords do not match."
+        },
+        "error": {
+          "unexpected": "An unexpected error occurred."
+        }
+      }
+    }
+  }
+}
