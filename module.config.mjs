@@ -1,4 +1,4 @@
 export default {
-  type: 'feature',
-  order: 50,
+  type: 'provider',
+  order: 1,
 };
