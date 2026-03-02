@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { signOut } from 'auth-astro/client';
+import { signOut } from '../../lib/auth-client';
 import { useTranslation } from 'react-i18next';
 import { useShellStore } from '@/lib/ui/shell-store';
 import { useNavData } from '@/lib/ui/nav-context';
