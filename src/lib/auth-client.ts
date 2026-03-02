@@ -20,9 +20,11 @@ export async function signIn(provider: string, options: Record<string, unknown>)
     formData.append('csrfToken', csrfToken);
     formData.append('email', (options.identifier || options.email) as string);
     formData.append('password', options.password as string);
-    formData.append('json', 'true');
-
     const callbackUrl = (options.callbackUrl as string) || window.location.href;
+
+    formData.append('json', 'true');
+    formData.append('callbackUrl', callbackUrl);
+
     const res = await fetch(
       `${AUTH_API_URL}/callback/credentials?callbackUrl=${encodeURIComponent(callbackUrl)}`,
       {
