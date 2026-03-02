@@ -1,19 +1,32 @@
-// GENERATED CODE - DO NOT MODIFY
 import type { APIContext, MiddlewareNext } from 'astro';
+import { getSession } from './lib/auth-session';
 
 export async function onRequest(context: APIContext, next: MiddlewareNext) {
+  console.log('[UserMiddleware] onRequest triggered for:', context.url.pathname);
   const publicRoutes: string[] = [];
   if (publicRoutes.some((route) => context.url.pathname.startsWith(route))) return next();
-  const session = (context.locals as any).session;
-  if (session) {
-    const user = await session.get('user');
-    if (user) {
-      // Compatibility with Actor system
-      context.locals.actor = user;
-      context.locals.actorType = 'user';
-    }
+
+  const session = await getSession(context.request, context);
+  console.log('[UserMiddleware] Session fetched:', session ? 'Valid' : 'Null/None');
+
+  if (session && session.user) {
+    // Compatibility with Actor system
+    context.locals.actor = session.user as any;
+    context.locals.actorType = 'user';
+
+    // Inject user into NavContext for client-side rendering
+    context.locals.navData = {
+      ...context.locals.navData,
+      context: {
+        ...context.locals.navData?.context,
+        user: session.user,
+      },
+    };
+    console.log(`[USER MID] Session Match, User: ${session.user.email}`);
+  } else {
+    console.log(`[USER MID] No Session or User`);
   }
-  if (context.locals.actor) return next();
+
   return next();
 }
 export default { onRequest };
