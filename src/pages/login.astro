@@ -8,7 +8,7 @@ import { PageGuard } from '@/lib/ui/page-guard';
 
 const isPublicMode = import.meta.env.PUBLIC_USER_MODE === 'PUBLIC' || true;
 
-const guard = await PageGuard.protect(Astro, 'anonymous');
+const guard = await PageGuard.protect(Astro, 'ANONYMOUS');
 if (guard) return guard;
 ---
 

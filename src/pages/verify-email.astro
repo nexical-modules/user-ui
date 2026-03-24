@@ -6,7 +6,7 @@ import { ModuleI18nIntegration } from '@/lib/integrations/module-i18n-integratio
 import { PageGuard } from '@/lib/ui/page-guard';
 import { VerifyEmailController } from '@modules/user-ui/src/components/auth/verify-email-controller';
 
-const guard = await PageGuard.protect(Astro, 'anonymous');
+const guard = await PageGuard.protect(Astro, 'ANONYMOUS');
 if (guard) return guard;
 
 const lang = Astro.cookies.get('i18next')?.value || config.PUBLIC_DEFAULT_LANGUAGE || 'en';
